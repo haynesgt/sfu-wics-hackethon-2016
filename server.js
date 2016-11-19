@@ -13,7 +13,7 @@ function createId() {
 
 var db = low('database/ants.json');
 
-db.defaults({colonies: {}, users: {}, workers: {}});
+db.defaults({colonies: {}, users: {}, workers: {}}).value();
 
 var app = express();
 
@@ -73,6 +73,12 @@ app.post('/api/colonies', function(req, res, next) {
     res.end('error: no colonyName');
     return;
   }
+  var colonies = db.get('colonies').value();
+  if (_.find(colonies, {name: colonyName})) {
+    res.satus(500);
+    res.end('error: colony already exists');
+    return;
+  }
   // find the user
   var user;
   try { user = db.get('users.' + userId).value(); }
@@ -98,8 +104,6 @@ app.post('/api/colonies', function(req, res, next) {
     res.json({id: colonyId, colony: colony});
   } else {
     // create a colony when the user has none
-    var colonies;
-    colonies = db.get('colonies').value();
     if (!colonies) { colonies = {}; }
     var colonyId;
     do { colonyId = createId(); }

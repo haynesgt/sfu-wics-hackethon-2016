@@ -33,6 +33,14 @@ angular.module('appName', ['ngResource'])
 
   $scope.beginData = {};
   $scope.hasColony = false;
+  $scope.hasLocation = false;
+
+  $scope.locations = [
+    {x: 0, y: 3},
+    {x: 1, y: 2},
+    {x: 2, y: 1},
+    {x: 3, y: 0},
+  ];
 
 })
 .directive('antGame', function($http) {
