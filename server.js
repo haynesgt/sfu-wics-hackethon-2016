@@ -26,15 +26,32 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 app.use('/', express.static('client'));
 
+app.post('/api/users', function(req, res, next) {
+  // it should create a user in the database
+  // it should give the user a unique id
+  // it should return {userId: number, user: {created: dateString}}
+  var users;
+  try { users = db.getData('/users'); }
+  catch (e) { users = []; }
+  var userId;
+  do { userId = createId(); }
+  while (users[userId]);
+  var user = {created: (new Date())};
+  db.push('/users/' + userId, user);
+  res.json({id: userId, user: user});
+});
+
 app.get('/api/colonies', function(req, res, next) {
   // it should return a list of all colonies that exist
   var colonies;
-  try {
-    colonies = db.getData('/colonies');
-  } catch (error) {
-    colonies = [];
-  }
+  try { colonies = db.getData('/colonies'); }
+  catch (error) { colonies = []; }
   res.json(colonies);
+});
+
+app.get('/api/colonies/:colonyId', function(req, res, next) {
+  try { res.json(db.getData('/colonies/' + req.params.colonyId)); }
+  catch (error) { res.end('error'); }
 });
 
 app.post('/api/colonies', function(req, res, next) {
@@ -44,7 +61,6 @@ app.post('/api/colonies', function(req, res, next) {
   // it should create a colony when the user has none
   var userId = req.body.userId;
   if (!userId) {
-    // reject requests that have no userId
     res.end('error: no userId');
     return;
   }
@@ -53,7 +69,7 @@ app.post('/api/colonies', function(req, res, next) {
     res.end('error: no colonyName');
     return;
   }
-  // find user
+  // find the user
   var user;
   try { user = db.getData('/users/' + userId); }
   catch (error) { }
@@ -90,38 +106,6 @@ app.post('/api/colonies', function(req, res, next) {
       return;
     }
     res.json({id: colonyId, colony: colony});
-  }
-});
-
-app.post('/api/users', function(req, res, next) {
-  // it should create a user in the database
-  // it should give the user a unique id
-  // it should return {userId: number, user: {created: dateString}}
-  var users;
-  try {
-    users = db.getData('/users');
-  } catch (e) {
-    users = [];
-  }
-  var userId;
-  do {
-    userId = createId();
-  } while (users[userId]);
-  var user = {created: (new Date())};
-  db.push('/users/' + userId, user);
-  res.json({id: userId, user: user});
-});
-
-// deprecated
-app.get('/api/users/:id', function(req, res, next) {
-  res.end('error: hidden');
-  return;
-  // it should return the user that matches id
-  try {
-    var user = db.getData('/users/' + req.params.id);
-    res.json(user);
-  } catch (error) {
-    res.end('error: no user ' + req.params.id);
   }
 });
 
