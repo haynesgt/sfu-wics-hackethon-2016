@@ -1,17 +1,23 @@
 var JsonDB = require('node-json-db');
+var express = require('express');
+var cookieParser = require('cookie-parser');
+
 var db = new JsonDB(
   'database/ants',
   true, // save after each push
-  false // not human readable
+  true // not human readable
 );
 
-db.push('/colonies', {name: 'me'});
-
-var express = require('express');
 var app = express();
 
-app.get('/', function(req, res, err) {
-  res.end(JSON.stringify(db.getData('/colonies')));
+app.use(cookieParser());
+
+app.use('/', express.static('client'));
+
+app.get('/api', function(req, res, err) {
+  var colonies = db.getData('/colonies');
+  db.push('/access[]', (new Date()).toJSON());
+  res.end(JSON.stringify(colonies));
 });
 
 app.listen(8080, function() {
