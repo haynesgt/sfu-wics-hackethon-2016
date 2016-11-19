@@ -1,0 +1,24 @@
+{
+  "name": "haynesgt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/haynesgt/sfu-wics-hackethon-2016.git"
+  },
+  "keywords": [
+    "wics",
+    "hackethon",
+    "2016"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/haynesgt/sfu-wics-hackethon-2016/issues"
+  },
+  "homepage": "https://github.com/haynesgt/sfu-wics-hackethon-2016#readme"
+}
