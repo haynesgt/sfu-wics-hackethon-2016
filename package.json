@@ -1,7 +1,7 @@
 {
   "name": "haynesgt",
   "version": "1.0.0",
-  "description": "",
+  "description": "Ant Game",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/haynesgt/sfu-wics-hackethon-2016/issues"
   },
-  "homepage": "https://github.com/haynesgt/sfu-wics-hackethon-2016#readme"
+  "homepage": "https://github.com/haynesgt/sfu-wics-hackethon-2016#readme",
+  "dependencies": {
+    "node-json-db": "^0.7.3"
+  }
 }
