@@ -1,7 +1,7 @@
-var JsonDB = require('node-json-db');
 var express = require('express');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var low = require('lowdb');
 var _ = require('lodash');
 
 function createId() {
@@ -11,44 +11,9 @@ function createId() {
   return (Math.random() + '').slice(2);
 }
 
-var db = new JsonDB(
-  'database/ants',
-  true, // save after each push
-  true // not human readable
-);
+var db = low('database/ants.json');
 
-var db = {
-  data: {},
-  getData: function(url) {
-    var components = url.split('/');
-    var i;
-    var data = db.data;
-    for (i = 0; i < components.length; i++) {
-      data = data[components[i]];
-    }
-    return data;
-  },
-  push: function(url, pushData, replace) {
-    var components = url.split('/');
-    var i;
-    var data = db.data;
-    for (i = 0; i < components.length; i++) {
-      var componentName = components[i];
-      var next = data[componentName];
-      if (next == undefined) {
-        data[componentName] = next = {};
-      }
-      data = next;
-    }
-    if (replace) {
-      data[components[i - 1]] = pushData;
-    } else {
-      for (component in pushData) {
-        data[component] = pushData[component];
-      }
-    }
-  }
-};
+db.defaults({colonies: {}, users: {}, workers: {}});
 
 var app = express();
 
@@ -66,26 +31,28 @@ app.post('/api/users', function(req, res, next) {
   // it should give the user a unique id
   // it should return {userId: number, user: {created: dateString}}
   var users;
-  try { users = db.getData('/users'); }
-  catch (e) { users = []; }
+  users = db.get('users').value();
+  if (!users) {
+    users = {};
+  }
   var userId;
   do { userId = createId(); }
   while (users[userId]);
   var user = {created: (new Date())};
-  db.push('/users/' + userId, user);
+  db.set('users.' + userId, user).value();
   res.json({id: userId, user: user});
 });
 
 app.get('/api/colonies', function(req, res, next) {
   // it should return a list of all colonies that exist
   var colonies;
-  try { colonies = db.getData('/colonies'); }
-  catch (error) { colonies = []; }
+  try { colonies = db.get('colonies').value(); }
+  catch (error) { colonies = {}; }
   res.json(colonies);
 });
 
 app.get('/api/colonies/:colonyId', function(req, res, next) {
-  try { res.json(db.getData('/colonies/' + req.params.colonyId)); }
+  try { res.json(db.get('/colonies/' + req.params.colonyId).value()); }
   catch (error) { res.end('error'); }
 });
 
@@ -108,7 +75,7 @@ app.post('/api/colonies', function(req, res, next) {
   }
   // find the user
   var user;
-  try { user = db.getData('/users/' + userId); }
+  try { user = db.get('users.' + userId).value(); }
   catch (error) { }
   if (!user) {
     res.status(500);
@@ -120,10 +87,10 @@ app.post('/api/colonies', function(req, res, next) {
     // update a colony when the user already has one
     var colony = { name: colonyName, location: {x: 0, y: 0} };
     try {
-      db.push('/colonies/' + user.colonyId, colony);
+      db.set('colonies' + user.colonyId, colony).value();
     }
     catch (error) {
-    res.status(500);
+      res.status(500);
       res.end('error: could not update colony');
       return;
     }
@@ -131,16 +98,16 @@ app.post('/api/colonies', function(req, res, next) {
     res.json({id: colonyId, colony: colony});
   } else {
     // create a colony when the user has none
-    var colonies = {};
-    try { colonies = db.getData('/colonies'); }
-    catch (error) { res.end(''); }
+    var colonies;
+    colonies = db.get('colonies').value();
+    if (!colonies) { colonies = {}; }
     var colonyId;
     do { colonyId = createId(); }
     while (colonies[colonyId]);
     colony = {name: colonyName, location: {x: 0, y: 0}};
     try {
-      db.push('/users/' + userId, {colonyId: colonyId}, false);
-      db.push('/colonies/' + colonyId, colony);
+      db.set('colonies.' + colonyId, colony).value();
+      db.set('users.' + userId + '.colonyId', colonyId).value();
     } catch (error) {
       res.status(500);
       res.end('error: could not create colony');
@@ -152,14 +119,14 @@ app.post('/api/colonies', function(req, res, next) {
 
 app.get('/api/food', function(req, res, next) {
   var resources = [];
-  try { resources = db.getData('/food'); }
+  try { resources = db.get('food'); }
   catch (error) { }
   res.json(resources);
 });
 
 app.get('/api/workers', function(req, res, next) {
   var workers = {};
-  try { workers = db.getData('/workers/'); }
+  try { workers = db.get('workers'); }
   catch (error) { }
   res.json(workers);
 });

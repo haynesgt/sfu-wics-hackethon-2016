@@ -1,7 +1,7 @@
 var resource;
 
 angular.module('appName', ['ngResource'])
-.controller('antGameController', function($scope, $http, $resource) {
+.controller('antGameController', function($scope, $http, $resource, $timeout) {
   resource = $resource;
   var users = $resource('/api/users');
   var colonies = $resource('/api/colonies');
@@ -17,14 +17,17 @@ angular.module('appName', ['ngResource'])
   $scope.begin = function() {
     user = users.save({}, function(userData) {
       console.log(userData);
-      colony = colonies.save(
-        {},
-        {userId: userData.id, colonyName: $scope.beginData.colonyName},
-        function(colonyData) {
-          console.log(colonyData);
-          gameReload();
-          $scope.hasColony = true;
-      });
+      $timeout(function() {
+        colony = colonies.save(
+          {}, {userId: userData.id, colonyName: $scope.beginData.colonyName},
+          function(colonyData) {
+            console.log(colonyData);
+            $timeout(function() {
+              gameReload();
+              $scope.hasColony = true;
+            }, 100);
+          });
+      }, 100);
     });
   };
 
