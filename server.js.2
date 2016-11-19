@@ -18,36 +18,9 @@ var db = new JsonDB(
 );
 
 var db = {
-  data: {},
-  getData: function(url) {
-    var components = url.split('/');
-    var i;
-    var data = db.data;
-    for (i = 0; i < components.length; i++) {
-      data = data[components[i]];
-    }
-    return data;
-  },
-  push: function(url, pushData, replace) {
-    var components = url.split('/');
-    var i;
-    var data = db.data;
-    for (i = 0; i < components.length; i++) {
-      var componentName = components[i];
-      var next = data[componentName];
-      if (next == undefined) {
-        data[componentName] = next = {};
-      }
-      data = next;
-    }
-    if (replace) {
-      data[components[i - 1]] = pushData;
-    } else {
-      for (component in pushData) {
-        data[component] = pushData[component];
-      }
-    }
-  }
+  users: {},
+  colonies: {},
+  food: {}
 };
 
 var app = express();
@@ -66,27 +39,25 @@ app.post('/api/users', function(req, res, next) {
   // it should give the user a unique id
   // it should return {userId: number, user: {created: dateString}}
   var users;
-  try { users = db.getData('/users'); }
+  try { users = db['users']; }
   catch (e) { users = []; }
   var userId;
   do { userId = createId(); }
   while (users[userId]);
   var user = {created: (new Date())};
-  db.push('/users/' + userId, user);
+  db.users.userId = user;
   res.json({id: userId, user: user});
 });
 
 app.get('/api/colonies', function(req, res, next) {
   // it should return a list of all colonies that exist
   var colonies;
-  try { colonies = db.getData('/colonies'); }
-  catch (error) { colonies = []; }
+  colonies = db.colonies;
   res.json(colonies);
 });
 
 app.get('/api/colonies/:colonyId', function(req, res, next) {
-  try { res.json(db.getData('/colonies/' + req.params.colonyId)); }
-  catch (error) { res.end('error'); }
+  res.json(db.colonies[req.params.colonyId]);
 });
 
 app.post('/api/colonies', function(req, res, next) {
@@ -108,58 +79,43 @@ app.post('/api/colonies', function(req, res, next) {
   }
   // find the user
   var user;
-  try { user = db.getData('/users/' + userId); }
-  catch (error) { }
+  user = db.users[userId];
   if (!user) {
     res.status(500);
-    res.end('error: no user having id ' + userId);
-    console.log(db.data);
+    res.end('error: no user having id ' : userId);
+    console.log(db);
     return;
   }
   if (user.colonyId) {
     // update a colony when the user already has one
     var colony = { name: colonyName, location: {x: 0, y: 0} };
-    try {
-      db.push('/colonies/' + user.colonyId, colony);
-    }
-    catch (error) {
-    res.status(500);
-      res.end('error: could not update colony');
-      return;
-    }
+    db.colonies[user.colonyId] = colony;
     var colonyId = user.colonyId;
     res.json({id: colonyId, colony: colony});
   } else {
     // create a colony when the user has none
     var colonies = {};
-    try { colonies = db.getData('/colonies'); }
-    catch (error) { res.end(''); }
+    colonies = db.colonies;
     var colonyId;
     do { colonyId = createId(); }
     while (colonies[colonyId]);
     colony = {name: colonyName, location: {x: 0, y: 0}};
-    try {
-      db.push('/users/' + userId, {colonyId: colonyId}, false);
-      db.push('/colonies/' + colonyId, colony);
-    } catch (error) {
-      res.status(500);
-      res.end('error: could not create colony');
-      return;
-    }
+    db.users[userId].colonyId = colonyId;
+    db.colonies[colonyId] = colony;
     res.json({id: colonyId, colony: colony});
   }
 });
 
 app.get('/api/food', function(req, res, next) {
   var resources = [];
-  try { resources = db.getData('/food'); }
+  try { resources = db.food; }
   catch (error) { }
   res.json(resources);
 });
 
 app.get('/api/workers', function(req, res, next) {
   var workers = {};
-  try { workers = db.getData('/workers/'); }
+  try { workers = db.workers; }
   catch (error) { }
   res.json(workers);
 });

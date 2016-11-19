@@ -1,5 +1,17 @@
-<ul>
-  <li ng-repeat="colony in colonies">
-    {{colony.name}}
-  </li>
-</ul>
+<div ng-controller="antGameController">
+
+  <form ng-submit="begin()" class="text-center" ng-if="!hasUser">
+    <input type="text" name="colonyName" ng-model="beginData.colonyName"></input>
+    <input type="submit" value="Start new colony" class="btn btn-primary"></input>
+  </form>
+
+  <ul>
+    <li ng-repeat="colony in colonies">
+      {{colony.name}}
+    </li>
+    <li ng-repeat="foodItem in food">
+      {{foodItem.type}}
+    </li>
+  </ul>
+
+</div>
