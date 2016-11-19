@@ -4,7 +4,8 @@
   "description": "Ant Game",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "rmdb": "rm -r ./database/"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,7 @@
   },
   "homepage": "https://github.com/haynesgt/sfu-wics-hackethon-2016#readme",
   "dependencies": {
+    "express": "^4.14.0",
     "node-json-db": "^0.7.3"
   }
 }
