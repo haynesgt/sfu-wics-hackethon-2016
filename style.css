@@ -20,16 +20,28 @@ body, html {
 	position: relative;
 	}
 
-.progress {
+.status {
 	position: absolute;
 	left: 25%;
-	background-color: rgba(244, 245, 235, 0.4);
+	background-color: rgba(244, 245, 235, 0.7);
 	margin: auto;
 	top: 20px;
 	width: 500px;
 	height: 400px;
 	z-index: 10;
+	padding: 30px;
 	}	
+
+
+.status-bars tr, td {
+	padding: 15px 10px;
+	height: 80px;
+	}
+
+		
+.bar {
+	width: 100%;
+	}		
 	
 .table {
 	position: absolute;
@@ -38,6 +50,7 @@ body, html {
 .table tr, td {
 	width: 40px;
 	height: 40px;
+	border: 0px !important;
 	}
 	
 .table td img {
@@ -47,6 +60,4 @@ body, html {
 .table .img-big {
 	height: 80px !important;
 }
-
-
 
