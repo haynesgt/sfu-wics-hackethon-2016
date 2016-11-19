@@ -109,6 +109,24 @@ app.post('/api/colonies', function(req, res, next) {
   }
 });
 
+app.get('/api/food', function(req, res, next) {
+  var resources = [];
+  try { resources = db.getData('/food'); }
+  catch (error) { }
+  res.json(resources);
+});
+
+app.get('/api/workers', function(req, res, next) {
+  var workers = {};
+  try { workers = db.getData('/workers/'); }
+  catch (error) { }
+  res.json(workers);
+});
+
+app.post('/api/workers', function(req, res, next) {
+  // it should create a worker if the user's colony supports it
+});
+
 app.listen(8080, function() {
   console.log('app listening on port 8080...');
 });
