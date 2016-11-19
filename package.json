@@ -23,8 +23,10 @@
   },
   "homepage": "https://github.com/haynesgt/sfu-wics-hackethon-2016#readme",
   "dependencies": {
+    "body-parser": "^1.15.2",
     "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
+    "lodash": "^4.17.2",
     "node-json-db": "^0.7.3"
   }
 }
