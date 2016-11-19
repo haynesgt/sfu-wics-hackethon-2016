@@ -7,6 +7,13 @@
   </head>
   <body>
     <ant-game></ant-game>
+    <form action="/api/users" method="post">
+      <input type='submit' value='Create User'></input>
+    </form>
+    <form action="/api/colonies" method="post">
+      <input type="text" name="userId"></input>
+      <input type='submit' value='Create Colony'></input>
+    </form>
     <script src="/js/app.js"></script>
   </body>
 </html>
