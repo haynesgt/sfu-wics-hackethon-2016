@@ -20,6 +20,23 @@ body, html {
 	position: relative;
 	}
 
+.sidebar.affix-top {
+    position: absolute;
+    margin-top:30px;
+    width:160px;
+	background-color: rgba(244, 245, 235, 0.7);
+	z-index: 10;
+  }
+
+.sidebar.affix {
+    position: fixed;
+    top:130px;
+    width:160px;
+	background-color: rgba(244, 245, 235, 0.7);
+	z-index: 10;
+  }
+
+	
 .status {
 	position: absolute;
 	left: 25%;
@@ -33,11 +50,14 @@ body, html {
 	}	
 
 
-.status-bars tr, td {
-	padding: 15px 10px;
-	height: 80px;
+.progress-bars tr, td {
+	padding: 10px 10px;
+	height: 60px;
 	}
 
+.progress-img img {
+	padding: 5px;
+	}
 		
 .bar {
 	width: 100%;
@@ -60,4 +80,6 @@ body, html {
 .table .img-big {
 	height: 80px !important;
 }
+
+
 
