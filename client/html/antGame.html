@@ -1,19 +1,10 @@
 <div ng-controller="antGameController">
 
-  <colony-creator grid="gameGrid" begin-data="beginData" begin="begin" has-colony="hasColony" error="error">
+  <colony-creator grid="gameGrid" begin-data="beginData" begin="begin" has-colony="hasColony" error="error" colonies="colonies">
   </colony-creator>
 
   <game-grid grid="gameGrid">
   </game-grid>
 
-  Colonies:
-  <ul>
-    <li ng-repeat="colony in colonies">
-      {{colony.name}}
-    </li>
-    <li ng-repeat="foodItem in food">
-      {{foodItem.type}}
-    </li>
-  </ul>
 
 </div>

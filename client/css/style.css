@@ -1,6 +1,6 @@
 body, html {
 	background-color: #81d134;
-	background-image: url("grass-tile.png");
+	background-image: url("/img/grass-tile.png");
 	background-size: 40px;
 	background-position: center center;
 	margin:0 auto;
@@ -10,7 +10,7 @@ body, html {
 
 .header {
 	background-color: #CCFFFF;
-	background-image: url("mountains.png");
+	background-image: url("/img/mountains.png");
 	background-repeat: repeat-x;
 	background-size: auto 100px;
 	height: 100px;
@@ -33,7 +33,7 @@ body, html {
 	}	
 
 
-.status-bars tr, td {
+.status-bars tr, .status-bars td {
 	padding: 15px 10px;
 	height: 80px;
 	}
@@ -47,7 +47,7 @@ body, html {
 	position: absolute;
 	}
 
-.table tr, td {
+.table tr, .table td {
 	width: 40px;
 	height: 40px;
 	border: 0px !important;

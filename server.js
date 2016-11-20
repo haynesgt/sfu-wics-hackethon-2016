@@ -81,7 +81,7 @@ app.post('/api/colonies', function(req, res, next) {
   }
   var colonies = db.get('colonies').value();
   if (_.find(colonies, {name: colonyName})) {
-    res.satus(500);
+    res.status(500);
     res.end('error: colony already exists');
     return;
   }
@@ -143,10 +143,7 @@ app.get('/api/grid', function(req, res, next) {
   for (i = 0; i < grid.height; i++) {
     grid.cells[i] = new Array(grid.width);
     for (j = 0; j < grid.width; j++) {
-      grid.cells[i][j] = {
-        type: 'none',
-        location: { x: j, y: i }
-      };
+      grid.cells[i][j] = { type: 'none', location: { x: j, y: i } };
     }
   }
   var colonyId;

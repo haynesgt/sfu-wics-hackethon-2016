@@ -11,7 +11,9 @@ angular.module('appName', ['ngResource'])
   var gameReload = function() {
     colonies.get({}, function(data) {
       $scope.colonies = data;
-      console.log(data);
+    });
+    grid.get(function(gridData) {
+      $scope.gameGrid = gridData;
     });
   };
 
@@ -40,7 +42,11 @@ angular.module('appName', ['ngResource'])
               gameReload();
               $scope.hasColony = true;
             }, 100);
-          });
+          },
+          function(errorData) {
+            $scope.error = errorData.data;
+          }
+        );
       }, 100);
     });
   };
@@ -83,7 +89,8 @@ angular.module('appName', ['ngResource'])
       gameGrid: '=grid',
       begin: '=',
       hasColony: '=',
-      error: '='
+      error: '=',
+      colonies: '='
     },
     link: function(scope, elem, attrs) {
       $(elem).find('.modal').modal({

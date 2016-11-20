@@ -6,20 +6,34 @@
         </div>
         <form ng-submit="begin()">
         <div class="modal-body">
-            <h1>Colony Name</h1>
-            <input type="text" name="colonyName" ng-model="beginData.colonyName"></input>
-            <h1>Colony Location</h1>
-            <table class="selectTable">
-              <tr ng-repeat="row in gameGrid.cells">
-                <td ng-repeat="col in row" style="line-height: 10px">
-                  <label style="width: 16px; height: 16px; margin: 0" ng-click="setLocation(col)" ng-class="{'bg-primary': beginData.location==col.location, 'bg-danger': col.type != 'none'}"></label>
-                </td>
-              </tr>
-            </table>
+          <div class="row">
+            <div class="col-md-8">
+              <h1>Colony Name</h1>
+              <input type="text" name="colonyName" ng-model="beginData.colonyName"></input>
+              <h1>Colony Location</h1>
+              <table class="selectTable">
+                <tr ng-repeat="row in gameGrid.cells">
+                  <td ng-repeat="col in row" style="line-height: 10px">
+                    <label style="width: 16px; height: 16px; margin: 0" ng-click="setLocation(col)" ng-class="{'bg-primary': beginData.location==col.location, 'bg-danger': col.type != 'none'}"></label>
+                  </td>
+                </tr>
+              </table>
+            </div>
+
+            <div class="col-md-4">
+              <div>
+                <h1>Colonies</h1>
+              <ul>
+                <li ng-repeat="colony in colonies">
+                  {{colony.name}}
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <div class="alert alert-danger" ng-if="error">
-            Error: {{error}}
+            {{error}}
           </div>
           <input type="submit" value="Start new colony" class="btn btn-primary"></input>
         </div>
