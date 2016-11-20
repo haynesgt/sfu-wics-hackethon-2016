@@ -7,8 +7,8 @@
 		<div class="progress-img"><img src="/img/taco.png" height="50px"></div>
 		<div class="progress">
   		<div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="{{user.colony.status.taco}}"
-  		aria-valuemin="0" aria-valuemax="100" style="width:{{user.colony.status.taco}}%">
-		<span class="count">{{user.colony.status.taco}}</span>
+  		aria-valuemin="0" aria-valuemax="100" style="width:{{user.colony.status.taco * 100}}%">
+		<span class="count">{{user.colony.status.taco * 100 | number : 0}}</span>
     		</div>
 		</div>
 	</td>

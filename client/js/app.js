@@ -66,7 +66,7 @@ angular.module('appName', ['ngResource'])
     $scope.gameGrid = gridData;
   });
 
-  $interval(gameReload, 1000);
+  $interval(gameReload, 200);
 })
 .directive('antGame', function($http) {
   return {

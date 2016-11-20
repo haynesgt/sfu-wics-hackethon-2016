@@ -120,7 +120,9 @@ app.post('/api/colonies', function(req, res, next) {
       id: colonyId,
       name: colonyName,
       location: colonyLocation,
-      status: {strawberry: 1, taco: 1, leaf: 1, doughnut: 1, apple: 1},
+      status: {
+        strawberry: 0.5, taco: 0.5, leaf: 0.5, doughnut: 0.5, apple: 0.5
+      },
       workers: []
     };
     try {
@@ -254,6 +256,6 @@ function gameUpdate() {
 
 app.listen(8080, function() {
   console.log('app listening on port 8080...');
-  setInterval(gameUpdate, 2000);
+  setInterval(gameUpdate, 500);
 });
 
