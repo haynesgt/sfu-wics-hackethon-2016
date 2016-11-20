@@ -1,6 +1,3 @@
-var gameWidth = 20;
-var gameHeight = 20;
-
 angular.module('appName', ['ngResource'])
 .controller('antGameController', function($scope, $http, $resource, $timeout) {
   var users = $resource('/api/users');
@@ -30,6 +27,7 @@ angular.module('appName', ['ngResource'])
     }
     $scope.error = '';
     user = users.save({}, function(userData) {
+      $scope.user = user;
       $timeout(function() {
         colony = colonies.save(
           {
@@ -38,6 +36,7 @@ angular.module('appName', ['ngResource'])
             colonyLocation: $scope.beginData.location
           },
           function(colonyData) {
+            $scope.user.colonyId = colonyData.id;
             $timeout(function() {
               gameReload();
               $scope.hasColony = true;
@@ -55,21 +54,6 @@ angular.module('appName', ['ngResource'])
   $scope.hasColony = false;
   $scope.hasLocation = false;
   $scope.locations = [{x: 1, y: 2}];
-  $scope.gameWidth = gameWidth;
-  $scope.gameHeight = gameHeight;
-
-  var i, j;
-  gameGrid = new Array(gameHeight);
-  for (i = 0; i < gameHeight; i++) {
-    gameGrid[i] = new Array(gameWidth);
-    for (j = 0; j < gameWidth; j++) {
-      gameGrid[i][j] = {
-        location: {x: j, y: i},
-        data: 0
-      };
-    }
-  }
-  $scope.gameGrid = gameGrid;
 
   grid.get(function(gridData) {
     $scope.gameGrid = gridData;
@@ -114,7 +98,8 @@ angular.module('appName', ['ngResource'])
   return {
     templateUrl: '/html/gameGrid.html',
     scope: {
-      grid: '='
+      grid: '=',
+      user: '='
     },
     link: function(scope, elem, attrs) {
     }

@@ -1,7 +1,8 @@
 <table class="gameTable">
   <tr ng-repeat="row in grid.cells">
-    <td ng-repeat="col in row" style="line-height: 10px">
+    <td ng-repeat="col in row" style="line-height: 10px" ng-class="{'bg-primary': col.data.id == user.colonyId}">
       <img ng-if="col.type=='colony'" src="/img/anthill.png"/>
+      <img ng-if="col.type=='resource'" src="/img/taco.png"/>
     </td>
   </tr>
 </table>

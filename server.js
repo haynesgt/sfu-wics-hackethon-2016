@@ -38,7 +38,7 @@ app.post('/api/users', function(req, res, next) {
   var userId;
   do { userId = createId(); }
   while (users[userId]);
-  var user = {created: (new Date())};
+  var user = {id: userId, created: (new Date())};
   db.set('users.' + userId, user).value();
   res.json({id: userId, user: user});
 });
@@ -114,7 +114,9 @@ app.post('/api/colonies', function(req, res, next) {
     var colonyId;
     do { colonyId = createId(); }
     while (colonies[colonyId]);
-    colony = {name: colonyName, location: colonyLocation};
+    colony = {id: colonyId, name: colonyName, location: colonyLocation,
+      status: {strawberry: 1, taco: 1, leaf: 1, doughnut: 1, apple: 1}
+    };
     try {
       db.set('colonies.' + colonyId, colony).value();
       db.set('users.' + userId + '.colonyId', colonyId).value();
@@ -134,7 +136,7 @@ app.get('/api/resources', function(req, res, next) {
   res.json(resources);
 });
 
-app.get('/api/grid', function(req, res, next) {
+function getGrid() {
   var resources = db.get('resources').value();
   var colonies = db.get('colonies').value();
   var grid = { width: 15, height: 15 };
@@ -165,10 +167,31 @@ app.get('/api/grid', function(req, res, next) {
         location: resource.location
       };
   }
-  res.json(grid);
+  return grid;
+}
+
+app.get('/api/grid', function(req, res, next) {
+  res.json(getGrid());
 });
+
+function addResource() {
+  var grid = getGrid();
+  var location = {
+    x: Math.floor(Math.random() * grid.width),
+    y: Math.floor(Math.random() * grid.height),
+  };
+  if (grid.cells[location.y][location.x].type == 'none') {
+    var id = createId();
+    db.set('resources.' + id, {
+      id: id,
+      type: 'taco',
+      location: location
+    }).value();
+  }
+}
 
 app.listen(8080, function() {
   console.log('app listening on port 8080...');
+  setInterval(addResource, 2000);
 });
 

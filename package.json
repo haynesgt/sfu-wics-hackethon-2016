@@ -4,8 +4,9 @@
   "description": "Ant Game",
   "main": "server.js",
   "scripts": {
+    "mkdb": "mkdir -p database",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "rmdb": "rm -r ./database/",
+    "rmdb": "rm ./database/*",
     "docp": "cp style.css client/css/style.css"
   },
   "repository": {
