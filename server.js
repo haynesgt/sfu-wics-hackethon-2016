@@ -174,7 +174,7 @@ app.get('/api/grid', function(req, res, next) {
   res.json(getGrid());
 });
 
-function addResource() {
+function gameUpdate() {
   var grid = getGrid();
   var location = {
     x: Math.floor(Math.random() * grid.width),
@@ -192,6 +192,6 @@ function addResource() {
 
 app.listen(8080, function() {
   console.log('app listening on port 8080...');
-  setInterval(addResource, 2000);
+  setInterval(gameUpdate, 2000);
 });
 
