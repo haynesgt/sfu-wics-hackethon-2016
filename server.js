@@ -143,7 +143,7 @@ app.post('/api/colonies/:colonyId/workers', function(req, res, next) {
   _.forEach(colonies, function(colony) {
     _.forEach(colony.workers, function(worker) {
       if (worker.resourceId == req.body.resourceId) {
-        delete colony.workers[worker.id];
+        worker.resourceId = -1;
       }
     });
   });
@@ -158,7 +158,7 @@ app.post('/api/colonies/:colonyId/workers', function(req, res, next) {
   if (!workers) {
     workers = [newWorker];
   } else {
-    workers = workers.slice(workers.length - 5);
+    workers = workers.slice(workers.length - 10);
     workers.push(newWorker);
   }
   db.set('colonies.' + req.params.colonyId + '.workers', workers).value();
@@ -255,12 +255,12 @@ function gameUpdate() {
     if (!colony.status) {
         badColonies.push(colony);
     }
-    for (stat in colony.status) {
+    _.forEach(resourceTypes, function(stat) {
       colony.status[stat] -= 0.01;
       if (colony.status[stat] <= 0) {
         badColonies.push(colony);
       }
-    }
+    });
   });
   _.forEach(badColonies, function(badColony) {
     delete colonies[badColony.id];
@@ -268,8 +268,8 @@ function gameUpdate() {
   db.set('colonies', colonies).value();
 }
 
-app.listen(8080, function() {
-  console.log('app listening on port 8080...');
+app.listen(80, function() {
+  console.log('app listening on port 80...');
   setInterval(gameUpdate, 500);
 });
 
