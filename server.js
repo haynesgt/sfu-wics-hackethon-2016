@@ -138,6 +138,18 @@ app.post('/api/colonies', function(req, res, next) {
 });
 
 app.post('/api/colonies/:colonyId/workers', function(req, res, next) {
+  // it should remove all other workers from the resource
+  var colonies = db.get('colonies').value();
+  _.forEach(colonies, function(colony) {
+    _.forEach(colony.workers, function(worker) {
+      if (worker.resourceId == req.body.resourceId) {
+        delete colony.workers[worker.id];
+      }
+    });
+  });
+  db.set('colonies', colonies).value();
+
+
   var workers = db.get('colonies.' + req.params.colonyId + '.workers').value();
   newWorker = {
     resourceId: req.body.resourceId,
@@ -199,25 +211,27 @@ app.get('/api/grid', function(req, res, next) {
 });
 
 function gameUpdate() {
-  var grid = getGrid();
-  var location = {
-    x: Math.floor(Math.random() * grid.width),
-    y: Math.floor(Math.random() * grid.height),
-  };
-  if (grid.cells[location.y][location.x].type == 'none') {
-    var id = createId();
-    db.set('resources.' + id, {
-      id: id,
-      type: resourceTypes[Math.floor(Math.random() * resourceTypes.length)],
-      location: location,
-      created: (new Date()).getTime()
-    }).value();
+  if (Math.random() < 0.1) {
+    var grid = getGrid();
+    var location = {
+      x: Math.floor(Math.random() * grid.width),
+      y: Math.floor(Math.random() * grid.height),
+    };
+    if (grid.cells[location.y][location.x].type == 'none') {
+      var id = createId();
+      db.set('resources.' + id, {
+        id: id,
+        type: resourceTypes[Math.floor(Math.random() * resourceTypes.length)],
+        location: location,
+        created: (new Date()).getTime()
+      }).value();
+    }
   }
 
   var now = new Date().getTime();
   var resources = db.get('resources').value();
   _.forEach(resources, function(resource) {
-    if (!resource.created || now - resource.created > 30000) {
+    if (!resource.created || now - resource.created > 90000) {
       delete resources[resource.id];
     }
   });
@@ -229,7 +243,7 @@ function gameUpdate() {
     // work the workers
     _.forEach(colony.workers, function(worker) {
       var resource = db.get('resources.' + worker.resourceId).value();
-      if (resource) {
+      if (resource && colony.status) {
         colony.status[resource.type] += 0.02;
         if (colony.status[resource.type] > 1) {
           colony.status[resource.type] = 1;

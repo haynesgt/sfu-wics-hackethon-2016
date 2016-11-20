@@ -16,7 +16,12 @@ angular.module('appName', ['ngResource'])
   var gameReload = function() {
     api.colonies.get({}, function(data) {
       $scope.colonies = data;
-      $scope.user.colony = data[$scope.user.colony.id];
+      if ($scope.user) {
+        $scope.user.colony = data[$scope.user.colony.id];
+        if (!$scope.user.colony) {
+          console.log('Dead!');
+        }
+      }
     });
     api.grid.get(function(gridData) {
       $scope.gameGrid = gridData;
@@ -66,7 +71,7 @@ angular.module('appName', ['ngResource'])
     $scope.gameGrid = gridData;
   });
 
-  $interval(gameReload, 200);
+  $interval(gameReload, 1000);
 })
 .directive('antGame', function($http) {
   return {
@@ -123,7 +128,13 @@ angular.module('appName', ['ngResource'])
         if (col.type != 'resource') {
           return false;
         }
-        return _.find(user.colony.workers, function(worker) {
+        if (!scope.user) {
+          return false;
+        }
+        if (!scope.user.colony) {
+          return false;
+        }
+        return _.find(scope.user.colony.workers, function(worker) {
           return worker.resourceId == col.id;
         });
       };
