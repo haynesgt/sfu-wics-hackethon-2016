@@ -36,7 +36,7 @@ angular.module('appName', ['ngResource'])
             colonyLocation: $scope.beginData.location
           },
           function(colonyData) {
-            $scope.user.colonyId = colonyData.id;
+            $scope.user.colony = colonyData.colony;
             $timeout(function() {
               gameReload();
               $scope.hasColony = true;
@@ -107,6 +107,9 @@ angular.module('appName', ['ngResource'])
 })
 .directive('gameSidebar', function() {
   return {
+    scope: {
+      'user': '='
+    },
     templateUrl: '/html/gameSidebar.html',
   };
 });
