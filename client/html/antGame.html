@@ -1,7 +1,10 @@
 <div ng-controller="antGameController">
 
-  <colony-creator game-grid="gameGrid" begin-data="beginData" begin="begin" has-colony="hasColony">
+  <colony-creator grid="gameGrid" begin-data="beginData" begin="begin" has-colony="hasColony" error="error">
   </colony-creator>
+
+  <game-grid grid="gameGrid">
+  </game-grid>
 
   Colonies:
   <ul>

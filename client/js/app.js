@@ -18,24 +18,31 @@ angular.module('appName', ['ngResource'])
   gameReload();
 
   $scope.begin = function() {
-    if ($scope.beginData.location && $scope.beginData.colonyName) {
-      user = users.save({}, function(userData) {
-        $timeout(function() {
-          colony = colonies.save(
-            {
-              userId: userData.id,
-              colonyName: $scope.beginData.colonyName,
-              colonyLocation: $scope.beginData.location
-            },
-            function(colonyData) {
-              $timeout(function() {
-                gameReload();
-                $scope.hasColony = true;
-              }, 100);
-            });
-        }, 100);
-      });
+    if (!$scope.beginData.location) {
+      $scope.error = 'No Location';
+      return;
     }
+    if (!$scope.beginData.colonyName) {
+      $scope.error = 'No Name';
+      return;
+    }
+    $scope.error = '';
+    user = users.save({}, function(userData) {
+      $timeout(function() {
+        colony = colonies.save(
+          {
+            userId: userData.id,
+            colonyName: $scope.beginData.colonyName,
+            colonyLocation: $scope.beginData.location
+          },
+          function(colonyData) {
+            $timeout(function() {
+              gameReload();
+              $scope.hasColony = true;
+            }, 100);
+          });
+      }, 100);
+    });
   };
 
   $scope.beginData = {};
@@ -73,9 +80,10 @@ angular.module('appName', ['ngResource'])
     templateUrl: '/html/colonyCreator.html',
     scope: {
       beginData: '=',
-      gameGrid: '=',
+      gameGrid: '=grid',
       begin: '=',
-      hasColony: '='
+      hasColony: '=',
+      error: '='
     },
     link: function(scope, elem, attrs) {
       $(elem).find('.modal').modal({
@@ -92,6 +100,16 @@ angular.module('appName', ['ngResource'])
           scope.beginData.location = col.location;
         }
       };
+    }
+  };
+})
+.directive('gameGrid', function() {
+  return {
+    templateUrl: '/html/gameGrid.html',
+    scope: {
+      grid: '='
+    },
+    link: function(scope, elem, attrs) {
     }
   };
 });

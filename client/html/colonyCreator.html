@@ -18,6 +18,9 @@
             </table>
         </div>
         <div class="modal-footer">
+          <div class="alert alert-danger" ng-if="error">
+            Error: {{error}}
+          </div>
           <input type="submit" value="Start new colony" class="btn btn-primary"></input>
         </div>
         </form>
