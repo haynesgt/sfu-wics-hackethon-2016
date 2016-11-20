@@ -30,7 +30,7 @@ body, html {
 
 .sidebar.affix {
     position: fixed;
-    top:130px;
+    top:30px;
     width:160px;
 	background-color: rgba(244, 245, 235, 0.7);
 	z-index: 10;
