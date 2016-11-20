@@ -13,7 +13,7 @@ function createId() {
 
 var db = low('database/ants.json');
 
-db.defaults({colonies: {}, users: {}, workers: {}}).value();
+db.defaults({colonies: {}, users: {}, resources: {}}).value();
 
 var app = express();
 
@@ -73,6 +73,12 @@ app.post('/api/colonies', function(req, res, next) {
     res.end('error: no colonyName');
     return;
   }
+  var colonyLocation = req.body.colonyLocation;
+  if (!colonyLocation) {
+    res.status(500);
+    res.end('error: no colonyLocation');
+    return;
+  }
   var colonies = db.get('colonies').value();
   if (_.find(colonies, {name: colonyName})) {
     res.satus(500);
@@ -91,7 +97,7 @@ app.post('/api/colonies', function(req, res, next) {
   }
   if (user.colonyId) {
     // update a colony when the user already has one
-    var colony = { name: colonyName, location: {x: 0, y: 0} };
+    var colony = { name: colonyName, location: colonyLocation };
     try {
       db.set('colonies' + user.colonyId, colony).value();
     }
@@ -108,7 +114,7 @@ app.post('/api/colonies', function(req, res, next) {
     var colonyId;
     do { colonyId = createId(); }
     while (colonies[colonyId]);
-    colony = {name: colonyName, location: {x: 0, y: 0}};
+    colony = {name: colonyName, location: colonyLocation};
     try {
       db.set('colonies.' + colonyId, colony).value();
       db.set('users.' + userId + '.colonyId', colonyId).value();
@@ -121,22 +127,48 @@ app.post('/api/colonies', function(req, res, next) {
   }
 });
 
-app.get('/api/food', function(req, res, next) {
+app.get('/api/resources', function(req, res, next) {
   var resources = [];
-  try { resources = db.get('food'); }
+  try { resources = db.get('resources'); }
   catch (error) { }
   res.json(resources);
 });
 
-app.get('/api/workers', function(req, res, next) {
-  var workers = {};
-  try { workers = db.get('workers'); }
-  catch (error) { }
-  res.json(workers);
-});
-
-app.post('/api/workers', function(req, res, next) {
-  // it should create a worker if the user's colony supports it
+app.get('/api/grid', function(req, res, next) {
+  var resources = db.get('resources').value();
+  var colonies = db.get('colonies').value();
+  var grid = { width: 20, height: 20 };
+  grid.cells = new Array(grid.height);
+  var i, j;
+  for (i = 0; i < grid.height; i++) {
+    grid.cells[i] = new Array(grid.width);
+    for (j = 0; j < grid.width; j++) {
+      grid.cells[i][j] = {
+        type: 'none',
+        location: { x: j, y: i }
+      };
+    }
+  }
+  var colonyId;
+  for (colonyId in colonies) {
+    var colony = colonies[colonyId];
+    if (colony.location) {
+      grid.cells[colony.location.y][colony.location.x] =
+        {type: 'colony', id: colonyId, data: colony, location: colony.location};
+    }
+  }
+  var resourceId;
+  for (resourceId in resources) {
+    var resource = resources[resourceId];
+    grid.cells[resource.location.y][resource.location.x] =
+      {
+        type: 'resource',
+        id: resourceId,
+        data: resource,
+        location: resource.location
+      };
+  }
+  res.json(grid);
 });
 
 app.listen(8080, function() {

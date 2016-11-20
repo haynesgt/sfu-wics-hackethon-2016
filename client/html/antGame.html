@@ -1,21 +1,12 @@
 <div ng-controller="antGameController">
 
-  <form ng-submit="begin()" ng-if="!hasColony">
-    <h1>Colony Name</h1>
-    <input type="text" name="colonyName" ng-model="beginData.colonyName"></input>
-    <h1>Colony Location</h1>
-    <ul>
-      <li ng-repeat="location in locations">
-        <input type="radio" name="beginData.location" value="{{location.x}},{{location.y}}">{{location.x}},{{location.y}}</input>
-      </li>
-    </ul>
-    <input type="submit" value="Start new colony" class="btn btn-primary"></input>
-  </form>
+  <colony-creator game-grid="gameGrid" begin-data="beginData" begin="begin" has-colony="hasColony">
+  </colony-creator>
 
   Colonies:
   <ul>
     <li ng-repeat="colony in colonies">
-      {{colony}}
+      {{colony.name}}
     </li>
     <li ng-repeat="foodItem in food">
       {{foodItem.type}}

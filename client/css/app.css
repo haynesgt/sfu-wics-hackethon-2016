@@ -1,0 +1,3 @@
+table.selectTable, .selectTable th, .selectTable td {
+  border: 1px solid black;
+}
