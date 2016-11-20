@@ -68,7 +68,7 @@ body, html {
 }
 
 .gameTable tr, .gameTable td {
-	width: 40px;
+	width: 61px;
 	height: 40px;
 	border: 0px !important;
 	}
