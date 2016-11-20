@@ -16,10 +16,11 @@ angular.module('appName', ['ngResource'])
   var gameReload = function() {
     api.colonies.get({}, function(data) {
       $scope.colonies = data;
-      if ($scope.user) {
+      if ($scope.user && $scope.user.colony) {
         $scope.user.colony = data[$scope.user.colony.id];
         if (!$scope.user.colony) {
           console.log('Dead!');
+          $('#dieModal').modal('show');
         }
       }
     });
@@ -148,4 +149,9 @@ angular.module('appName', ['ngResource'])
       },
       templateUrl: '/html/gameSidebar.html',
     };
-  });
+  })
+.directive('gameOver', function() {
+  return {
+    templateUrl: '/html/gameOver.html'
+  };
+});
