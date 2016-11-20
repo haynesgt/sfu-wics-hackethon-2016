@@ -14,7 +14,7 @@
               <table class="selectTable">
                 <tr ng-repeat="row in gameGrid.cells">
                   <td ng-repeat="col in row" style="line-height: 10px">
-                    <label style="width: 16px; height: 16px; margin: 0" ng-click="setLocation(col)" ng-class="{'bg-primary': beginData.location==col.location, 'bg-danger': col.type != 'none'}"></label>
+                    <label style="width: 16px; height: 16px; margin: 0" ng-click="setLocation(col)" ng-class="{'bg-primary': beginData.location.x==col.location.x && beginData.location.y == col.location.y, 'bg-danger': col.type != 'none'}"></label>
                   </td>
                 </tr>
               </table>

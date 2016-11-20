@@ -1,20 +1,27 @@
+
 angular.module('appName', ['ngResource'])
-.controller('antGameController', function($scope, $http, $resource, $timeout) {
-  var users = $resource('/api/users');
-  var colonies = $resource('/api/colonies');
-  var resources = $resource('/api/resources');
-  var grid = $resource('/api/grid');
+.controller(
+ 'antGameController',
+  function($scope, $http, $resource, $timeout, $interval) {
+
+  var api;
+  $scope.api = api = {
+    users: $resource('/api/users'),
+    colonies: $resource('/api/colonies'),
+    resources: $resource('/api/resources'),
+    grid: $resource('/api/grid'),
+    workers: $resource('/api/colonies/:colonyId/workers', {colonyId: '@id'})
+  };
 
   var gameReload = function() {
-    colonies.get({}, function(data) {
+    api.colonies.get({}, function(data) {
       $scope.colonies = data;
+      $scope.user.colony = data[$scope.user.colony.id];
     });
-    grid.get(function(gridData) {
+    api.grid.get(function(gridData) {
       $scope.gameGrid = gridData;
     });
   };
-
-  gameReload();
 
   $scope.begin = function() {
     if (!$scope.beginData.location) {
@@ -26,10 +33,10 @@ angular.module('appName', ['ngResource'])
       return;
     }
     $scope.error = '';
-    user = users.save({}, function(userData) {
+    user = api.users.save({}, function(userData) {
       $scope.user = user;
       $timeout(function() {
-        colony = colonies.save(
+        colony = api.colonies.save(
           {
             userId: userData.id,
             colonyName: $scope.beginData.colonyName,
@@ -55,9 +62,11 @@ angular.module('appName', ['ngResource'])
   $scope.hasLocation = false;
   $scope.locations = [{x: 1, y: 2}];
 
-  grid.get(function(gridData) {
+  api.grid.get(function(gridData) {
     $scope.gameGrid = gridData;
   });
+
+  $interval(gameReload, 1000);
 })
 .directive('antGame', function($http) {
   return {
@@ -99,17 +108,33 @@ angular.module('appName', ['ngResource'])
     templateUrl: '/html/gameGrid.html',
     scope: {
       grid: '=',
-      user: '='
+      user: '=',
+      api: '='
     },
     link: function(scope, elem, attrs) {
+      scope.addWorker = function(resource) {
+        scope.api.workers.save(
+          {colonyId: scope.user.colony.id},
+          {resourceId: resource.id}
+        );
+        scope.user.colony.workers.push({resourceId: resource.id});
+      };
+      scope.workingOn = function(col) {
+        if (col.type != 'resource') {
+          return false;
+        }
+        return _.find(user.colony.workers, function(worker) {
+          return worker.resourceId == col.id;
+        });
+      };
     }
   };
 })
-.directive('gameSidebar', function() {
-  return {
-    scope: {
-      'user': '='
-    },
-    templateUrl: '/html/gameSidebar.html',
-  };
-});
+  .directive('gameSidebar', function() {
+    return {
+      scope: {
+        'user': '='
+      },
+      templateUrl: '/html/gameSidebar.html',
+    };
+  });

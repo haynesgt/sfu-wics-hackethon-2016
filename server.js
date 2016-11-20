@@ -11,6 +11,8 @@ function createId() {
   return (Math.random() + '').slice(2);
 }
 
+var resourceTypes = ['strawberry', 'taco', 'leaf', 'doughnut', 'apple'];
+
 var db = low('database/ants.json');
 
 db.defaults({colonies: {}, users: {}, resources: {}}).value();
@@ -38,7 +40,7 @@ app.post('/api/users', function(req, res, next) {
   var userId;
   do { userId = createId(); }
   while (users[userId]);
-  var user = {id: userId, created: (new Date())};
+  var user = {id: userId, created: (new Date()).getTime()};
   db.set('users.' + userId, user).value();
   res.json({id: userId, user: user});
 });
@@ -114,8 +116,12 @@ app.post('/api/colonies', function(req, res, next) {
     var colonyId;
     do { colonyId = createId(); }
     while (colonies[colonyId]);
-    colony = {id: colonyId, name: colonyName, location: colonyLocation,
-      status: {strawberry: 1, taco: 1, leaf: 1, doughnut: 1, apple: 1}
+    colony = {
+      id: colonyId,
+      name: colonyName,
+      location: colonyLocation,
+      status: {strawberry: 1, taco: 1, leaf: 1, doughnut: 1, apple: 1},
+      workers: []
     };
     try {
       db.set('colonies.' + colonyId, colony).value();
@@ -127,6 +133,22 @@ app.post('/api/colonies', function(req, res, next) {
     }
     res.json({id: colonyId, colony: colony});
   }
+});
+
+app.post('/api/colonies/:colonyId/workers', function(req, res, next) {
+  var workers = db.get('colonies.' + req.params.colonyId + '.workers').value();
+  newWorker = {
+    resourceId: req.body.resourceId,
+    health: 1
+  };
+  if (!workers) {
+    workers = [newWorker];
+  } else {
+    workers = workers.slice(workers.length - 5);
+    workers.push(newWorker);
+  }
+  db.set('colonies.' + req.params.colonyId + '.workers', workers).value();
+  res.json(newWorker);
 });
 
 app.get('/api/resources', function(req, res, next) {
@@ -184,10 +206,50 @@ function gameUpdate() {
     var id = createId();
     db.set('resources.' + id, {
       id: id,
-      type: 'taco',
-      location: location
+      type: resourceTypes[Math.floor(Math.random() * resourceTypes.length)],
+      location: location,
+      created: (new Date()).getTime()
     }).value();
   }
+
+  var now = new Date().getTime();
+  var resources = db.get('resources').value();
+  _.forEach(resources, function(resource) {
+    if (!resource.created || now - resource.created > 30000) {
+      delete resources[resource.id];
+    }
+  });
+  db.set('resources', resources).value();
+
+  var colonies = db.get('colonies').value();
+  var badColonies = [];
+  _.forEach(colonies, function(colony) {
+    // work the workers
+    _.forEach(colony.workers, function(worker) {
+      var resource = db.get('resources.' + worker.resourceId).value();
+      if (resource) {
+        colony.status[resource.type] += 0.02;
+        if (colony.status[resource.type] > 1) {
+          colony.status[resource.type] = 1;
+        }
+      }
+    });
+
+    // remove bad colonies
+    if (!colony.status) {
+        badColonies.push(colony);
+    }
+    for (stat in colony.status) {
+      colony.status[stat] -= 0.01;
+      if (colony.status[stat] <= 0) {
+        badColonies.push(colony);
+      }
+    }
+  });
+  _.forEach(badColonies, function(badColony) {
+    delete colonies[badColony.id];
+  });
+  db.set('colonies', colonies).value();
 }
 
 app.listen(8080, function() {
