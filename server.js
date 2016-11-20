@@ -137,7 +137,7 @@ app.get('/api/resources', function(req, res, next) {
 app.get('/api/grid', function(req, res, next) {
   var resources = db.get('resources').value();
   var colonies = db.get('colonies').value();
-  var grid = { width: 20, height: 20 };
+  var grid = { width: 15, height: 15 };
   grid.cells = new Array(grid.height);
   var i, j;
   for (i = 0; i < grid.height; i++) {

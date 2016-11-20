@@ -119,4 +119,9 @@ angular.module('appName', ['ngResource'])
     link: function(scope, elem, attrs) {
     }
   };
+})
+.directive('gameSidebar', function() {
+  return {
+    templateUrl: '/html/gameSidebar.html',
+  };
 });
