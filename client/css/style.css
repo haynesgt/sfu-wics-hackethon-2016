@@ -58,7 +58,12 @@ body, html {
 .bar {
 	width: 100%;
 	}		
-	
+
+.count {
+	color: #2F4F4F;
+	text-align: center;
+	}
+		
 .gameTable {
 }
 
