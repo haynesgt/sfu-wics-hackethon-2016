@@ -268,8 +268,8 @@ function gameUpdate() {
   db.set('colonies', colonies).value();
 }
 
-app.listen(80, function() {
-  console.log('app listening on port 80...');
+app.listen(8080, function() {
+  console.log('app listening on port 8080...');
   setInterval(gameUpdate, 500);
 });
 
