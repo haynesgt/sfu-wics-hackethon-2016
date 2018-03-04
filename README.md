@@ -8,7 +8,9 @@ run `npm install` to download dependencies.
 
 ## Configuration
 
-Edit the server.js file to change the port
+Edit the server.js file to change the port. By default it is port 8080.
+
+Run with `npm start`.
 
 ## Screenshots
 
