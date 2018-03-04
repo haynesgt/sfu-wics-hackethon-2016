@@ -4,7 +4,7 @@
 
 You'll need nodejs from nodejs.org. Add the nodejs "bin" folder to your path.
 
-run `npm install` to download dependencies.
+Run `npm install` to download dependencies.
 
 ## Configuration
 
